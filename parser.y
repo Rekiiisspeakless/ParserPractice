@@ -4,6 +4,7 @@
 extern int lineCount;
 extern char curString[2000];
 extern char* yytext;
+int function_main_flag = 0;
 %}
 %token KVOID KINT KDOUBLE KBOOL KCHAR KNULL KFOR KWHILE KDO KIF KELSE KSWITCH KRETURN KBREAK KCONTINUE KCONST KTRUE KFALSE KSTRUCT KCASE KDEFAULT
 %token ID
@@ -27,7 +28,7 @@ extern char* yytext;
 
 %%
 program: program S
-	   | program function
+	   | program function {function_main_flag = 1;}
        |
 	   ;
 function: type ID '(' para ')' '{' full_stats '}'
@@ -183,6 +184,10 @@ NUM: INT
 int main(void)
 {
 	yyparse();
+	if(function_main_flag == 0){
+		yyerror(" ");
+	}
+	fprintf(stdout, "No syntax error!\n");
 	return 0;
 }
 int yyerror(char* msg){

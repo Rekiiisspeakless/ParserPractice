@@ -22,7 +22,8 @@ static const char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 extern int lineCount;
 extern char curString[2000];
 extern char* yytext;
-#line 25 "y.tab.c"
+int function_main_flag = 0;
+#line 26 "y.tab.c"
 
 #ifndef YYSTYPE
 typedef int YYSTYPE;
@@ -550,10 +551,14 @@ typedef struct {
 } YYSTACKDATA;
 /* variables for the parser stack */
 static YYSTACKDATA yystack;
-#line 183 "parser.y"
+#line 184 "parser.y"
 int main(void)
 {
 	yyparse();
+	if(function_main_flag == 0){
+		yyerror(" ");
+	}
+	fprintf(stdout, "No syntax error!\n");
 	return 0;
 }
 int yyerror(char* msg){
@@ -564,7 +569,7 @@ int yyerror(char* msg){
 	exit(-1);
 }
 
-#line 566 "y.tab.c"
+#line 571 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -766,6 +771,11 @@ yyreduce:
         memset(&yyval, 0, sizeof yyval);
     switch (yyn)
     {
+case 2:
+#line 31 "parser.y"
+	{function_main_flag = 1;}
+break;
+#line 777 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

@@ -1,0 +1,964 @@
+1://simple statement and initialized
+#key:int
+#id:a
+#punc:;
+2:int a;
+#key:int
+#id:b
+#punc:,
+#id:c
+#punc:;
+3:int b,c;
+#key:double
+#id:d
+#op:=
+#double:2.2
+#punc:,
+#id:e
+#op:=
+#double:3.34
+#punc:;
+4:double d=2.2,e=3.34;
+#key:int
+#id:a
+#punc:[
+#integer:2
+#punc:]
+#punc:;
+5:int a[2];
+#key:int
+#id:b
+#punc:[
+#integer:3
+#punc:]
+#punc:[
+#integer:2
+#punc:]
+#punc:;
+6:int b[3][2];
+#key:int
+#id:c
+#punc:[
+#integer:2
+#punc:]
+#punc:,
+#id:d
+#punc:[
+#integer:3
+#punc:]
+#punc:;
+7:int c[2],d[3];
+#key:int
+#id:g
+#punc:,
+#id:ed
+#punc:[
+#integer:2
+#punc:]
+#punc:;
+8:int g,ed[2];
+#key:int
+#id:a
+#punc:[
+#integer:2
+#punc:]
+#op:=
+#punc:{
+#integer:3
+#punc:,
+#integer:2
+#punc:,
+#integer:3
+#punc:}
+#punc:;
+9:int a[2]={3,2,3};
+#key:int
+#id:b
+#punc:[
+#integer:3
+#punc:]
+#punc:[
+#integer:2
+#punc:]
+#op:=
+#punc:{
+#integer:2
+#punc:}
+#punc:;
+10:int b[3][2]={2};
+#key:int
+#id:a
+#op:=
+#integer:3
+#punc:;
+#key:double
+#id:c
+#op:=
+#integer:2
+#punc:;
+#key:int
+#id:b
+#punc:[
+#integer:2
+#punc:]
+#punc:[
+#integer:3
+#punc:]
+#op:=
+#punc:{
+#integer:2
+#punc:,
+#integer:3
+#punc:}
+#punc:;
+11:int a=3;double c=2;int b[2][3]={2,3};
+#key:bool
+#id:g
+#op:=
+#key:true
+#punc:,
+#id:e
+#op:=
+#key:false
+#punc:;
+12:bool g=true,e=false;
+#key:char
+#id:c
+#op:=
+#char:'3'
+#punc:;
+13:char c='3';
+#key:char
+#id:c
+#punc:[
+#integer:2
+#punc:]
+#op:=
+#punc:{
+#string:df
+#punc:}
+#punc:;
+14:char c[2]={"df"};
+#key:double
+#id:g
+#punc:[
+#integer:3
+#punc:]
+#op:=
+#punc:{
+#punc:}
+#punc:;
+15:double g[3]={};
+#key:bool
+#id:b
+#punc:[
+#integer:2
+#punc:]
+#op:=
+#punc:{
+#key:true
+#punc:,
+#key:false
+#punc:}
+#punc:;
+16:bool b[2]={true,false};
+17://const
+#key:const
+#key:int
+#id:a
+#op:=
+#integer:3
+#punc:;
+18:const int a=3;
+#key:const
+#key:double
+#id:b
+#op:=
+#double:2.3
+#punc:,
+#id:c
+#op:=
+#integer:2
+#punc:;
+19:const double b=2.3,c=2;
+#key:const
+#key:int
+#id:a
+#op:=
+#integer:2
+#punc:;
+#key:const
+#key:double
+#id:b
+#op:=
+#double:32.3
+#punc:;
+#key:const
+#key:bool
+#id:g
+#op:=
+#key:true
+#punc:;
+#key:const
+#key:char
+#id:d
+#op:=
+#char:'2'
+#punc:;
+20:const int a=2;const double b=32.3;const bool g=true;const char d = '2';
+21://function
+#key:int
+#id:a
+#punc:;
+22:int a;
+#key:int
+#id:main
+#punc:(
+#punc:)
+#punc:{
+23:int main(){	
+#punc:}
+24:}
+#key:int
+#id:cool
+#punc:(
+#key:int
+#id:a
+#punc:,
+#key:double
+#id:b
+#punc:,
+#key:bool
+#id:c
+#punc:,
+#key:char
+#id:d
+#punc:[
+#integer:2
+#punc:]
+#punc:)
+#punc:{
+25:int cool(int a,double b,bool c,char d[2]){
+#punc:}
+26:}
+#key:int
+#id:a
+#punc:;
+#key:void
+#id:co
+#punc:(
+#punc:)
+#punc:{
+#punc:}
+27:int a;void co(){}
+#key:int
+#id:goo
+#punc:(
+#key:int
+#id:e
+#punc:[
+#integer:3
+#punc:]
+#punc:[
+#integer:2
+#punc:]
+#punc:[
+#integer:4
+#punc:]
+#punc:)
+28:int goo(int e[3][2][4])
+#punc:{
+29:{
+#key:int
+#id:a
+#op:=
+#integer:3
+#punc:;
+30:	int a=3;
+#punc:}
+31:}
+32:// expression check
+33://int e[2+3/4]={5+3*5>4};
+34://mix use
+#key:int
+#id:test
+#punc:(
+#punc:)
+#punc:{
+35:int test(){
+#id:a
+#op:=
+#integer:324
+#op:+
+#integer:3
+#punc:;
+36:a= 324 + 3;
+#id:b
+#op:=
+#double:1.2
+#op:-
+#integer:3
+#op:/
+#integer:4
+#punc:;
+37:b = 1.2-3/4;
+#id:c
+#op:=
+#integer:4
+#op:*
+#integer:9
+#op:%
+#integer:3
+#punc:;
+38:c = 4*9%3;
+#id:d
+#op:=
+#integer:78
+#op:+
+#integer:5
+#op:<
+#integer:34
+#punc:;
+39:d=78 + 5 < 34;
+#id:e
+#op:=
+#integer:67
+#op:-
+#integer:3
+#op:>=
+#integer:23
+#punc:;
+40:e = 67 - 3>=23;
+#id:f
+#op:=
+#integer:87
+#op:<=
+#integer:1
+#punc:;
+41:f = 87 <=1;
+#id:g
+#op:=
+#integer:23
+#op:>
+#integer:4
+#punc:;
+42:g = 23 > 4;
+#id:h
+#op:=
+#integer:7
+#op:*
+#punc:(
+#integer:1
+#op:+
+#integer:3
+#punc:)
+#punc:;
+43:h = 7*(1+3);
+#id:i
+#op:=
+#integer:8
+#op:+
+#punc:(
+#id:j
+#op:++
+#punc:)
+#punc:;
+44:i = 8+(j++);
+#id:j
+#op:=
+#id:k
+#op:+
+#id:l
+#punc:;
+45:j = k+l;
+#id:k
+#op:=
+#id:a
+#op:+
+#punc:(
+#id:b
+#op:<
+#integer:2
+#punc:)
+#op:*
+#punc:(
+#id:c
+#op:>=
+#id:d
+#punc:)
+#punc:;
+46:k = a + (b<2)*(c>=d);
+#id:l
+#op:=
+#op:-
+#integer:2
+#punc:;
+47:l = -2;
+#id:m
+#op:=
+#integer:4
+#op:-
+#punc:(
+#op:-
+#integer:2
+#punc:)
+#punc:;
+48:m = 4-(-2);
+#id:n
+#op:=
+#id:g
+#op:+
+#op:!
+#integer:73
+#punc:;
+49:n = g+!73;
+#id:o
+#op:=
+#integer:1
+#op:+
+#op:-
+#integer:5
+#op:+
+#id:a
+#op:++
+#op:+
+#punc:(
+#op:+
+#integer:5
+#punc:)
+#punc:;
+50:o=1+-5+a+++(+5);
+#id:tmd
+#punc:[
+#integer:886
+#op:+
+#integer:9487
+#punc:]
+#op:=
+#integer:4
+#op:&&
+#integer:2
+#op:+
+#id:gj
+#op:++
+#punc:;
+51:tmd[886+9487]=4&&2+gj++;
+#id:REM
+#punc:[
+#id:EMT
+#punc:(
+#punc:)
+#punc:]
+#op:=
+#integer:486
+#punc:;
+52:REM[EMT()]=486;
+#id:b
+#op:=
+#id:cc
+#punc:(
+#id:EMT
+#punc:)
+#punc:;
+53:b=cc(EMT);
+54://function usage
+#id:emt
+#punc:(
+#punc:)
+#punc:;
+55:emt();
+#id:eee
+#punc:(
+#double:3.0
+#op:+
+#integer:232
+#op:/
+#double:4.121
+#op:*
+#double:3.1415
+#punc:)
+#punc:;
+56:eee(3.0+232/4.121*3.1415);
+#id:bbc
+#punc:(
+#string:haha
+#punc:,
+#key:false
+#punc:,
+#integer:2
+#punc:,
+#double:3.0
+#punc:)
+#punc:;
+57:bbc("haha",false,2,3.0);
+#id:a
+#op:=
+#id:b
+#punc:(
+#id:c
+#punc:(
+#punc:)
+#punc:,
+#id:d
+#punc:(
+#punc:)
+#punc:)
+#punc:;
+58:a = b( c() , d() );
+#id:gg
+#punc:(
+#id:max
+#punc:(
+#punc:)
+#op:+
+#id:min
+#punc:(
+#punc:)
+#op:*
+#id:abs
+#punc:(
+#id:emt
+#punc:(
+#op:!
+#integer:486
+#op:+
+#id:a
+#punc:)
+#punc:)
+#punc:,
+#id:c
+#punc:[
+#integer:7
+#punc:]
+#punc:)
+#punc:;
+59:gg(max()+min()*abs(emt(!486+a)), c[7]);
+#punc:}
+60:}
+61:
+#key:int
+#id:test_for
+#punc:(
+#punc:)
+62:int test_for()
+#punc:{
+63:{
+#key:for
+#punc:(
+#integer:8
+#op:&&
+#integer:3
+#punc:;
+#integer:3
+#op:<
+#integer:12
+#punc:;
+#integer:9
+#op:+
+#integer:1
+#punc:)
+#punc:{
+64:	for(8&&3;3<12;9+1){
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+#punc:{
+#punc:}
+65:		for(;;){}
+#punc:}
+66:	}
+67://	for(i=0;;) { a=2; } int EMT=9487; //No strict order	
+#punc:}
+68:}
+69:
+#key:void
+#id:test_if
+#punc:(
+#punc:)
+70:void test_if()
+#punc:{
+71:{
+#key:if
+#punc:(
+#id:i
+#op:==
+#integer:0
+#punc:)
+#punc:{
+#key:int
+#id:j
+#op:=
+#integer:2
+#punc:,
+#id:i
+#op:=
+#integer:0
+#punc:;
+#punc:}
+72:	if(i==0){ int j=2,i=0; }
+#key:else
+#punc:{
+#id:EMT
+#op:=
+#integer:486
+#punc:;
+#punc:}
+73:	else{EMT=486;}
+#key:if
+#punc:(
+#id:gg
+#punc:)
+#punc:{
+74:	if(gg){
+#key:if
+#punc:(
+#id:EMT
+#op:<=
+#integer:486
+#punc:)
+#punc:{
+#punc:}
+75:		if(EMT<=486){}
+#key:else
+#punc:{
+#punc:}
+76:		else{}
+#punc:}
+77:	}
+78:
+#punc:}
+79:}
+#key:void
+#id:test_while
+#punc:(
+#punc:)
+80:void test_while()
+#punc:{
+81:{
+#key:while
+#punc:(
+#id:EMT
+#op:<=
+#integer:486
+#punc:)
+#punc:{
+#id:EMT
+#op:=
+#id:EMT
+#op:+
+#integer:1
+#punc:;
+#punc:}
+82:	while(EMT<=486){EMT=EMT+1;}
+#key:do
+#punc:{
+#punc:}
+#key:while
+#punc:(
+#id:EMT
+#op:==
+#integer:486
+#punc:)
+#punc:;
+83:	do{}while(EMT==486);
+#key:while
+#punc:(
+#integer:7878
+#punc:)
+#punc:{
+#punc:}
+84:	while(7878){}
+#key:while
+#punc:(
+#op:!
+#id:gogogo
+#punc:)
+#punc:{
+#punc:}
+85:	while(!gogogo){}
+86:
+#punc:}
+87:}
+#key:void
+#id:test_bcr
+#punc:(
+#punc:)
+88:void test_bcr()
+#punc:{
+89:{
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+90:	for(;;)
+#punc:{
+91:	{
+#key:break
+#punc:;
+92:		break;
+#punc:}
+93:	}
+#key:while
+#punc:(
+#id:i
+#op:<
+#id:EMT
+#punc:)
+94:	while(i<EMT)
+#punc:{
+95:	{
+96:		
+#key:continue
+#punc:;
+97:		continue;
+#punc:}
+98:	}
+#key:return
+#id:EMT
+#punc:;
+99:	return EMT;
+#key:return
+#id:EMT
+#punc:;
+100:	return EMT;
+#punc:}
+101:}
+#key:void
+#id:test_switch
+#punc:(
+#punc:)
+102:void test_switch()
+#punc:{
+103:{
+#key:switch
+#punc:(
+#id:EMT
+#punc:)
+104:	switch(EMT)
+#punc:{
+105:	{
+#key:case
+#integer:4
+#punc::
+106:		case 4:
+#key:break
+#punc:;
+107:			break;
+#key:case
+#char:'d'
+#punc::
+108:		case 'd':
+#key:default
+#punc::
+109:		default:
+#id:EMT
+#op:=
+#integer:486
+#punc:;
+110:			EMT=486;
+#key:break
+#punc:;
+111:			break;
+#punc:}
+112:	}
+113:
+#punc:}
+114:}
+#key:int
+#id:mix_use
+#punc:(
+#key:double
+#id:g
+#punc:[
+#integer:2
+#punc:]
+#punc:[
+#integer:3
+#punc:]
+#punc:,
+#key:char
+#id:c
+#punc:[
+#integer:3
+#punc:]
+#punc:)
+115:int mix_use(double g[2][3],char c[3])
+#punc:{
+116:{
+#key:int
+#id:EMT
+#op:=
+#integer:486
+#punc:;
+117:	int EMT=486;
+#key:int
+#id:TT
+#punc:[
+#integer:5
+#punc:]
+#op:=
+#punc:{
+#key:false
+#punc:,
+#string:cc
+#punc:,
+#double:4.32
+#punc:,
+#integer:3
+#punc:}
+#punc:;
+118:	int TT[5]={false,"cc",4.32,3};
+119:	//double max = max(3.1415926,TT);
+#key:double
+#id:sci
+#op:=
+#sci:12.03E41
+#punc:;
+120:	double sci = 12.03E41;
+#key:for
+#punc:(
+#punc:;
+#id:i
+#op:<
+#integer:100
+#punc:;
+#punc:)
+121:	for(;i<100;)
+#punc:{
+122:	{
+#key:for
+#punc:(
+#punc:;
+#punc:;
+#punc:)
+123:		for(;;)
+#punc:{
+124:		{
+#key:if
+#punc:(
+#op:!
+#punc:(
+#id:max
+#op:>=
+#integer:100
+#punc:)
+#punc:)
+#punc:{
+125:			if(!(max>=100) ){
+#id:max
+#op:=
+#integer:486
+#punc:;
+126:				max = 486;
+#punc:}
+127:			}
+128:			 
+#punc:}
+129:		}
+130:		
+#key:if
+#punc:(
+#id:EMT
+#op:!=
+#integer:486
+#punc:)
+#punc:{
+#key:continue
+#punc:;
+#punc:}
+131:		if(EMT!=486) {continue;}
+#key:switch
+#punc:(
+#id:EMT
+#punc:)
+132:		switch(EMT)
+#punc:{
+133:		{
+#key:case
+#char:'d'
+#punc::
+134:			case 'd':
+#key:case
+#integer:1
+#punc::
+135:			case 1:
+#key:case
+#integer:486
+#punc::
+136:			case 486:
+137:
+#id:cc
+#punc:[
+#integer:5
+#punc:]
+#op:=
+#integer:5
+#punc:;
+138:				cc[5] = 5;
+#key:break
+#punc:;
+139:				break;
+#punc:}
+140:		}
+#key:printf
+#punc:(
+#string:%d
+#punc:,
+#id:abc
+#punc:)
+#punc:;
+141:		printf("%d",abc);	//test std function
+#key:return
+#id:EMT
+#punc:;
+142:		return EMT;
+#punc:}
+143:	}
+#punc:}
+144:}
+145:/*int test_self()	//remove for simple test
+146:{ 
+147:for(;i<10;i++){}
+148:for(i=0;i<10&&j>3;i++,j++);
+149:for(;;)
+150:{
+151:	for(;;i--){
+152:		for(;j<12;);
+153:	}
+154:}
+155:while(QQ);
+156:if(GG){}
+157:else if(EMT>999){}
+158:return;
+159:gj++;
+160:jg--;
+161:j+2;
+162:8787>=33||23;
+163:}*/
+164:
+165:
+#key:void
+#id:test_error
+#punc:(
+#punc:)
+#punc:{
+166:void test_error(){
+167:// const int d; //const should have initialize
+168:// const int b=2,a[2]={"d"}; //const can't have array
+169:// int cc(){	int dd(){}  }//function nested detect
+170:// switch(EMT){case 486: char cc[5]={"12345"};} //define in switchcase
+171:// switch(EMT486){case 6 : break; default: case 3: break;}	//default not at last
+172:// switch(ETTT){}	//no case inside
+173:// if(486){a=2; int EMT=9487;} //strict order
+174:// while(1){a=2; int EMT=9487;} //strict order
+175:// int GG(){	for(;;){} int ee(){} }//function nested detect
+176:// for(;test;){a=2; int EMT=9487;} //strict order
+177:// {a=2; int EMT=9487;} //strict order
+178:// int a[2/4];//error
+#punc:}
+179:}
+180:// int a(b[3+2]){}//error
+No syntax error!

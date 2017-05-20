@@ -31,14 +31,28 @@ program: program S
        |
 	   ;
 function: type ID '(' para ')' '{' stat '}'
+		| KVOID ID '(' para ')' '{' stat '}'
 		;
-stat: S
+function_var: ID '(' lots_of_expression ')'
+			| ID '(' ')'
+		    ;
+stat: ID '=' expression ';' stat
+	| ID '[' expression ']' stat_element_dim '=' expression ';' stat
+	|
+	| ID '=' function_var ';' stat
+	| function_var ';' stat
+	|S stat
+	;
+stat_element_dim: '[' expression ']'
+				|
+				;
+para: para ',' para_style
+	| para_style
 	|
 	;
-para: para ',' type ID
-    | type ID
-	|
-	;
+para_style: type ID
+		  | type ID '[' INT ']' dim 
+		  ;
 S: type lots_of_type  ';'
  | KCONST type lots_of_const_type ';'
  ;
@@ -70,6 +84,11 @@ type: KINT
 	| KCHAR
 	| KBOOL
 	;
+lots_of_expression: expression ',' lots_of_expression
+				  | expression
+				  | function_var ',' lots_of_expression
+				  | function_var
+				  ;
 expression: '(' expression ')'
 		  | expression DOUBLE_PLUS
 		  | expression DOUBLE_MINUS
@@ -87,6 +106,7 @@ expression: '(' expression ')'
 		  | KFALSE
 		  |	KTRUE
 		  | UNUM
+		  | ID
 		  ;
 UNUM: '+' NUM %prec unary
 	| '-' NUM %prec unary

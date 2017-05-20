@@ -93,147 +93,147 @@ char	('.'|'\\n'|'\\t')
 <PARSE>{key}	{
 					if(pragmaTokenFlag == 1){
 						printf("#key:%s\n",yytext);
-						if(!strcmp(yytext, "void")){
-							return KVOID;
-						}
-						if(!strcmp(yytext, "int")){
-							return KINT;
-						}
-						if(!strcmp(yytext, "double")){
-							return KDOUBLE;
-						}
-						if(!strcmp(yytext, "bool")){
-							return KBOOL;
-						}
-						if(!strcmp(yytext, "void")){
-							return KVOID;
-						}
-						if(!strcmp(yytext, "char")){
-							return KCHAR;
-						}
-						if(!strcmp(yytext, "null")){
-							return KNULL;
-						}
-						if(!strcmp(yytext, "for")){
-							return KFOR;
-						}
-						if(!strcmp(yytext, "while")){
-							return KWHILE;
-						}
-						if(!strcmp(yytext, "do")){
-							return KDO;
-						}
-						if(!strcmp(yytext, "if")){
-							return KIF;
-						}
-						if(!strcmp(yytext, "else")){
-							return KELSE;
-						}
-						if(!strcmp(yytext, "switch")){
-							return KSWITCH;
-						}
-						if(!strcmp(yytext, "return")){
-							return KRETURN;
-						}
-						if(!strcmp(yytext, "break")){
-							return KBREAK;
-						}
-						if(!strcmp(yytext, "continue")){
-							return KCONTINUE;
-						}
-						if(!strcmp(yytext, "const")){
-							return KCONST;
-						}
-						if(!strcmp(yytext, "true")){
-							return KTRUE;
-						}
-						if(!strcmp(yytext, "false")){
-							return KFALSE;
-						}
-						if(!strcmp(yytext, "struct")){
-							return KSTRUCT;
-						}
-						if(!strcmp(yytext, "case")){
-							return KCASE;
-						}
-						if(!strcmp(yytext, "default")){
-							return KDEFAULT;
-						}
+					}
+					if(!strcmp(yytext, "void")){
+						return KVOID;
+					}
+					if(!strcmp(yytext, "int")){
+						return KINT;
+					}
+					if(!strcmp(yytext, "double")){
+						return KDOUBLE;
+					}
+					if(!strcmp(yytext, "bool")){
+						return KBOOL;
+					}
+					if(!strcmp(yytext, "void")){
+						return KVOID;
+					}
+					if(!strcmp(yytext, "char")){
+						return KCHAR;
+					}
+					if(!strcmp(yytext, "null")){
+						return KNULL;
+					}
+					if(!strcmp(yytext, "for")){
+						return KFOR;
+					}
+					if(!strcmp(yytext, "while")){
+						return KWHILE;
+					}
+					if(!strcmp(yytext, "do")){
+						return KDO;
+					}
+					if(!strcmp(yytext, "if")){
+						return KIF;
+					}
+					if(!strcmp(yytext, "else")){
+						return KELSE;
+					}
+					if(!strcmp(yytext, "switch")){
+						return KSWITCH;
+					}
+					if(!strcmp(yytext, "return")){
+						return KRETURN;
+					}
+					if(!strcmp(yytext, "break")){
+						return KBREAK;
+					}
+					if(!strcmp(yytext, "continue")){
+						return KCONTINUE;
+					}
+					if(!strcmp(yytext, "const")){
+						return KCONST;
+					}
+					if(!strcmp(yytext, "true")){
+						return KTRUE;
+					}
+					if(!strcmp(yytext, "false")){
+						return KFALSE;
+					}
+					if(!strcmp(yytext, "struct")){
+						return KSTRUCT;
+					}
+					if(!strcmp(yytext, "case")){
+						return KCASE;
+					}
+					if(!strcmp(yytext, "default")){
+						return KDEFAULT;
 					}
 				}
 <PARSE>{keyFunc}	{
 						if(pragmaTokenFlag == 1){
 							printf("#key:%s\n",yytext);
-							return ID;
 						}
+						return ID;
 					}
 <PARSE>{op}	{
 				if(pragmaTokenFlag == 1){
 					printf("#op:%s\n",yytext);
-					if(!strcmp(yytext, "+")){
-						return '+';
-					}
-					if(!strcmp(yytext, "-")){
-						return '-';
-					}
-					if(!strcmp(yytext, "*")){
-						return '*';
-					}
-					if(!strcmp(yytext, "/")){
-						return '/';
-					}
-					if(!strcmp(yytext, "%")){
-						return '%';
-					}
-					if(!strcmp(yytext, "++")){
-						return DOUBLE_PLUS;
-					}
-					if(!strcmp(yytext, "--")){
-						return DOUBLE_MINUS;
-					}
-					if(!strcmp(yytext, "<")){
-						return COMPARE;
-					}
-					if(!strcmp(yytext, ">")){
-						return COMPARE;
-					}
-					if(!strcmp(yytext, "<=")){
-						return COMPARE;
-					}
-					if(!strcmp(yytext, ">=")){
-						return COMPARE;
-					}
-					if(!strcmp(yytext, "==")){
-						return COMPARE;
-					}
-					if(!strcmp(yytext, "!=")){
-						return COMPARE;
-					}
-					if(!strcmp(yytext, "=")){
-						return '=';
-					}
-					if(!strcmp(yytext, "&&")){
-						return AND;
-					}
-					if(!strcmp(yytext, "||")){
-						return OR;
-					}
-					if(!strcmp(yytext, "!")){
-						return '!';
-					}
+				}
+				if(!strcmp(yytext, "+")){
+					return '+';
+				}
+				if(!strcmp(yytext, "-")){
+					return '-';
+				}
+				if(!strcmp(yytext, "*")){
+					return '*';
+				}
+				if(!strcmp(yytext, "/")){
+					return '/';
+				}
+				if(!strcmp(yytext, "%")){
+					return '%';
+				}
+				if(!strcmp(yytext, "++")){
+					return DOUBLE_PLUS;
+				}
+				if(!strcmp(yytext, "--")){
+					return DOUBLE_MINUS;
+				}
+				if(!strcmp(yytext, "<")){
+					return COMPARE;
+				}
+				if(!strcmp(yytext, ">")){
+					return COMPARE;
+				}
+				if(!strcmp(yytext, "<=")){
+					return COMPARE;
+				}
+				if(!strcmp(yytext, ">=")){
+					return COMPARE;
+				}
+				if(!strcmp(yytext, "==")){
+					return COMPARE;
+				}
+				if(!strcmp(yytext, "!=")){
+					return COMPARE;
+				}
+				if(!strcmp(yytext, "=")){
+					return '=';
+				}
+				if(!strcmp(yytext, "&&")){
+					return AND;
+				}
+				if(!strcmp(yytext, "||")){
+					return OR;
+				}
+				if(!strcmp(yytext, "!")){
+					return '!';
 				}
 			}
 <PARSE>{punc}	{
 					if(pragmaTokenFlag == 1){
 						printf("#punc:%s\n",yytext);
-						return yytext[0];
 					}
+					return yytext[0];
 				}
 <PARSE>[a-zA-Z_][a-zA-Z_0-9]*	{
 									if(pragmaTokenFlag == 1){
 										printf("#id:%s\n",yytext);
-										return ID;
 									}
+									return ID;
 								}
 <PARSE>[0][0-9]+	{
 					fprintf(stderr, "Error at line %d: %s\n",lineCount, yytext);exit(1);}
@@ -242,35 +242,35 @@ char	('.'|'\\n'|'\\t')
 <PARSE>{integer}	{
 						if(pragmaTokenFlag == 1){
 							printf("#integer:%s\n",yytext);
-							return INT;
 						}
+						return INT;
 					}
 						
 <PARSE>{double}	{
 					if(pragmaTokenFlag == 1){
 						printf("#double:%s\n",yytext);
-						return DOUBLE;
 					}
+					return DOUBLE;
 				}
 <PARSE>([0-9]+|{double})[Ee][+-]?[0-9]+	{
 											if(pragmaTokenFlag == 1){
 												printf("#sci:%s\n",yytext);
-												return DOUBLE;
 											}
+											return DOUBLE;
 										}
 <PARSE>{char}	{
 					if(pragmaTokenFlag == 1){
 						printf("#char:%s\n",yytext);
-						return CHAR;
 					}
+					return CHAR;
 				}
 <PARSE>\"([^\n"]|\\\")*\"	{
 						if(pragmaTokenFlag == 1){
 							strncpy(tempString, yytext + 1, yyleng - 2);
 							tempString[yyleng - 2] = '\0';
 							printf("#string:%s\n",tempString);
-							return STRING;
 						}
+						return STRING;
 					}
 <PARSE>'.*'	{
 			fprintf(stderr, "Error at line %d: %s\n",lineCount, yytext);exit(1);}

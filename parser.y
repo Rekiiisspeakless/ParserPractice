@@ -44,7 +44,10 @@ stat: ID '=' expression ';' stat
 	|S stat
 	| if_stat stat
 	| for_loop stat
+	| while_stat stat
 	;
+while_stat: KWHILE '(' expression ')' '{' stat '}'
+		  ;
 if_stat: KIF '(' expression  ')'  '{' stat '}'
 	   | KIF '(' expression  ')'  '{' stat '}' KELSE '{' stat '}' 
        ;

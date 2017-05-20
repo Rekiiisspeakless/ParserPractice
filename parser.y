@@ -37,7 +37,7 @@ function_var: ID '(' lots_of_expression_var ')'
 			| ID '(' ')'
 		    ;
 stat: ID '=' expression ';' stat
-	| ID '[' expression ']' stat_element_dim '=' expression ';' stat
+	| ID '[' expression_var ']' stat_element_dim '=' expression ';' stat
 	|
 	| ID '=' function_var ';' stat
 	| function_var ';' stat
@@ -46,9 +46,26 @@ stat: ID '=' expression ';' stat
 	| for_loop stat
 	| while_stat stat
 	| do_while_stat stat
-	| KBREAK ';'
-	| KCONTINUE ';'
+	| KBREAK ';' stat
+	| KCONTINUE ';' stat
+	| KRETURN expression ';' stat
+	| switch_stat stat
 	;
+switch_stat: KSWITCH '(' ID ')' '{' default_stat '}'
+		   | KSWITCH '(' ID ')' '{' non_default_stat '}'
+		   ;
+default_stat: KCASE const ':' stat default_stat
+			| KDEFAULT ':' stat
+			;
+non_default_stat: KCASE const ':' stat non_default_case_stat 
+			    ;
+non_default_case_stat: KCASE const ':' stat non_default_case_stat
+					 |
+					 ;
+const: CHAR
+     | INT
+	 ;
+
 while_stat: KWHILE '(' expression ')' '{' stat '}'
 		  ;
 do_while_stat: KDO '{' stat'}' KWHILE '(' expression')' ';'
@@ -61,7 +78,7 @@ for_loop: KFOR '('for_loop_para ';' for_loop_para ';' for_loop_para')''{' stat '
 for_loop_para: expression
 			 | 
 			 ;
-stat_element_dim: '[' expression ']'
+stat_element_dim: '[' expression_var ']'
 				|
 				;
 para: para ',' para_style
@@ -91,7 +108,6 @@ lots_of_const_type: lots_of_const_type ',' const_type_init
 				  | const_type_init
 				  ;
 const_type_init: ID '=' expression
-			   | ID
 			   ;
 type_init: ID '=' expression
 	     | ID
@@ -123,7 +139,7 @@ expression_var: '(' expression_var ')'
 		  |	KTRUE
 		  | UNUM
 		  | ID
-		  | ID '['expression']' stat_element_dim
+		  | ID '['expression_var']' stat_element_dim
 		  | function_var
 		  ;
 expression: '(' expression ')'

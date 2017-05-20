@@ -45,9 +45,14 @@ stat: ID '=' expression ';' stat
 	| if_stat stat
 	| for_loop stat
 	| while_stat stat
+	| do_while_stat stat
+	| KBREAK ';'
+	| KCONTINUE ';'
 	;
 while_stat: KWHILE '(' expression ')' '{' stat '}'
 		  ;
+do_while_stat: KDO '{' stat'}' KWHILE '(' expression')' ';'
+			 ;
 if_stat: KIF '(' expression  ')'  '{' stat '}'
 	   | KIF '(' expression  ')'  '{' stat '}' KELSE '{' stat '}' 
        ;

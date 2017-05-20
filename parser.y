@@ -33,7 +33,7 @@ program: program S
 function: type ID '(' para ')' '{' stat '}'
 		| KVOID ID '(' para ')' '{' stat '}'
 		;
-function_var: ID '(' lots_of_expression ')'
+function_var: ID '(' lots_of_expression_var ')'
 			| ID '(' ')'
 		    ;
 stat: ID '=' expression ';' stat
@@ -84,11 +84,30 @@ type: KINT
 	| KCHAR
 	| KBOOL
 	;
-lots_of_expression: expression ',' lots_of_expression
-				  | expression
-				  | function_var ',' lots_of_expression
-				  | function_var
+lots_of_expression_var: expression_var ',' lots_of_expression_var
+				  | expression_var
 				  ;
+expression_var: '(' expression_var ')'
+		  | expression_var DOUBLE_PLUS
+		  | expression_var DOUBLE_MINUS
+		  | expression_var '+' expression_var
+		  | expression_var '-' expression_var
+		  | expression_var '*' expression_var
+		  | expression_var '/' expression_var
+		  | expression_var '%' expression_var
+		  | expression_var COMPARE expression_var
+		  | expression_var AND expression_var
+		  | expression_var OR expression_var
+		  | '!' expression_var
+		  | CHAR
+          | STRING
+		  | KFALSE
+		  |	KTRUE
+		  | UNUM
+		  | ID
+		  | ID '['expression']' stat_element_dim
+		  | function_var
+		  ;
 expression: '(' expression ')'
 		  | expression DOUBLE_PLUS
 		  | expression DOUBLE_MINUS

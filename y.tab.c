@@ -556,20 +556,22 @@ int main(void)
 {
 	yyparse();
 	if(function_main_flag == 0){
+		curString[0] = '\0';
 		yyerror(" ");
 	}
+	
 	fprintf(stdout, "No syntax error!\n");
 	return 0;
 }
 int yyerror(char* msg){
-	fprintf(stderr, "***Error at line %d: %s\n",lineCount, curString);
+	fprintf(stderr, "***Error at line %d: %s\n",lineCount + 1, curString);
 	fprintf(stderr,"\n");
 	fprintf(stderr, "Unmatched token: %s\n", yytext);
 	fprintf(stderr, "***syntax error\n");
 	exit(-1);
 }
 
-#line 571 "y.tab.c"
+#line 573 "y.tab.c"
 
 #if YYDEBUG
 #include <stdio.h>		/* needed for printf */
@@ -775,7 +777,7 @@ case 2:
 #line 31 "parser.y"
 	{function_main_flag = 1;}
 break;
-#line 777 "y.tab.c"
+#line 779 "y.tab.c"
     }
     yystack.s_mark -= yym;
     yystate = *yystack.s_mark;

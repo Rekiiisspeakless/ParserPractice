@@ -30,50 +30,60 @@ program: program S
 	   | program function
        |
 	   ;
-function: type ID '(' para ')' '{' stat '}'
-		| KVOID ID '(' para ')' '{' stat '}'
+function: type ID '(' para ')' '{' full_stats '}'
+		| KVOID ID '(' para ')' '{' full_stats '}'
 		;
 function_var: ID '(' lots_of_expression_var ')'
 			| ID '(' ')'
 		    ;
-stat: ID '=' expression ';' stat
-	| ID '[' expression_var ']' stat_element_dim '=' expression ';' stat
-	|
-	| ID '=' function_var ';' stat
-	| function_var ';' stat
-	|S stat
-	| if_stat stat
-	| for_loop stat
-	| while_stat stat
-	| do_while_stat stat
-	| KBREAK ';' stat
-	| KCONTINUE ';' stat
-	| KRETURN expression ';' stat
-	| switch_stat stat
+			
+full_stats: stats full_stats
+		  | S full_stats
+          | 
+		  ;
+nf : stats nf
+   |
+   ;
+stats: stat ';' 
+	 | if_stat 
+	 | for_loop 
+	 | while_stat 
+	 | do_while_stat 
+	 | switch_stat
+	 ;
+stat: ID '=' expression 
+	| ID '[' expression_var ']' stat_element_dim '=' expression 
+	| ID '=' function_var 
+	| function_var 
+	| KBREAK  
+	| KCONTINUE 
+	| KRETURN expression 
 	;
+
+
 switch_stat: KSWITCH '(' ID ')' '{' default_stat '}'
 		   | KSWITCH '(' ID ')' '{' non_default_stat '}'
 		   ;
-default_stat: KCASE const ':' stat default_stat
-			| KDEFAULT ':' stat
+default_stat: KCASE const ':' nf default_stat
+			| KDEFAULT ':' nf
 			;
-non_default_stat: KCASE const ':' stat non_default_case_stat 
+non_default_stat: KCASE const ':' nf non_default_case_stat 
 			    ;
-non_default_case_stat: KCASE const ':' stat non_default_case_stat
+non_default_case_stat: KCASE const ':' nf non_default_case_stat
 					 |
 					 ;
 const: CHAR
      | INT
 	 ;
 
-while_stat: KWHILE '(' expression ')' '{' stat '}'
+while_stat: KWHILE '(' expression ')' '{' full_stats '}'
 		  ;
-do_while_stat: KDO '{' stat'}' KWHILE '(' expression')' ';'
+do_while_stat: KDO '{' full_stats '}' KWHILE '(' expression')' ';'
 			 ;
-if_stat: KIF '(' expression  ')'  '{' stat '}'
-	   | KIF '(' expression  ')'  '{' stat '}' KELSE '{' stat '}' 
+if_stat: KIF '(' expression  ')'  '{' full_stats '}'
+	   | KIF '(' expression  ')'  '{' full_stats '}' KELSE '{' full_stats '}' 
        ;
-for_loop: KFOR '('for_loop_para ';' for_loop_para ';' for_loop_para')''{' stat '}'
+for_loop: KFOR '('for_loop_para ';' for_loop_para ';' for_loop_para')''{' full_stats '}'
 		;
 for_loop_para: expression
 			 | 

@@ -4,113 +4,149 @@
    2          | program function
    3          |
 
-   4  function : type ID '(' para ')' '{' stat '}'
-   5           | KVOID ID '(' para ')' '{' stat '}'
+   4  function : type ID '(' para ')' '{' declare_or_stat '}'
+   5           | KVOID ID '(' para ')' '{' declare_or_stat '}'
 
    6  function_var : ID '(' lots_of_expression_var ')'
    7               | ID '(' ')'
 
-   8  stat : ID '=' expression ';' stat
-   9       | ID '[' expression ']' stat_element_dim '=' expression ';' stat
-  10       |
-  11       | ID '=' function_var ';' stat
-  12       | function_var ';' stat
-  13       | S stat
-  14       | for_loop
+   8  full_stats : stats full_stats
+   9             | S full_stats
+  10             |
 
-  15  for_loop : KFOR '(' expression ';' expression ';' expression ')' '{' stat '}'
-  16           | KFOR '(' expression ';' expression ';' expression ')' '{' '}'
+  11  nf : stats nf
+  12     |
 
-  17  stat_element_dim : '[' expression ']'
-  18                   |
+  13  stats : stat ';'
+  14        | if_stat
+  15        | for_loop
+  16        | while_stat
+  17        | do_while_stat
+  18        | switch_stat
 
-  19  para : para ',' para_style
-  20       | para_style
-  21       |
+  19  stat : ID '=' expression
+  20       | ID '[' expression_var ']' stat_element_dim '=' expression
+  21       | ID '=' function_var
+  22       | function_var
+  23       | KBREAK
+  24       | KCONTINUE
+  25       | KRETURN expression
 
-  22  para_style : type ID
-  23             | type ID '[' INT ']' dim
+  26  switch_stat : KSWITCH '(' ID ')' '{' default_stat '}'
+  27              | KSWITCH '(' ID ')' '{' non_default_stat '}'
 
-  24  S : type lots_of_type ';'
-  25    | KCONST type lots_of_const_type ';'
+  28  default_stat : KCASE const ':' nf default_stat
+  29               | KDEFAULT ':' nf
 
-  26  dim : '[' INT ']' dim
-  27      |
+  30  non_default_stat : KCASE const ':' nf non_default_case_stat
 
-  28  array_init : '=' '{' array_element '}'
-  29             |
+  31  non_default_case_stat : KCASE const ':' nf non_default_case_stat
+  32                        |
 
-  30  array_element : array_element ',' expression
-  31                |
-  32                | expression
+  33  const : CHAR
+  34        | INT
 
-  33  lots_of_type : lots_of_type ',' type_init
-  34               | type_init
+  35  while_stat : KWHILE '(' expression ')' '{' full_stats '}'
 
-  35  lots_of_const_type : lots_of_const_type ',' const_type_init
-  36                     | const_type_init
+  36  do_while_stat : KDO '{' full_stats '}' KWHILE '(' expression ')' ';'
 
-  37  const_type_init : ID '=' expression
-  38                  | ID
+  37  if_stat : KIF '(' expression ')' '{' full_stats '}'
+  38          | KIF '(' expression ')' '{' full_stats '}' KELSE '{' full_stats '}'
 
-  39  type_init : ID '=' expression
-  40            | ID
-  41            | ID '[' INT ']' dim array_init
+  39  for_loop : KFOR '(' for_loop_para ';' for_loop_para ';' for_loop_para ')' '{' full_stats '}'
 
-  42  type : KINT
-  43       | KDOUBLE
-  44       | KCHAR
-  45       | KBOOL
+  40  for_loop_para : expression
+  41                |
 
-  46  lots_of_expression_var : expression_var ',' lots_of_expression_var
-  47                         | expression_var
+  42  stat_element_dim : '[' expression_var ']'
+  43                   |
 
-  48  expression_var : '(' expression_var ')'
-  49                 | expression_var DOUBLE_PLUS
-  50                 | expression_var DOUBLE_MINUS
-  51                 | expression_var '+' expression_var
-  52                 | expression_var '-' expression_var
-  53                 | expression_var '*' expression_var
-  54                 | expression_var '/' expression_var
-  55                 | expression_var '%' expression_var
-  56                 | expression_var COMPARE expression_var
-  57                 | expression_var AND expression_var
-  58                 | expression_var OR expression_var
-  59                 | '!' expression_var
-  60                 | CHAR
-  61                 | STRING
-  62                 | KFALSE
-  63                 | KTRUE
-  64                 | UNUM
-  65                 | ID
-  66                 | ID '[' expression ']' stat_element_dim
-  67                 | function_var
+  44  para : para ',' para_style
+  45       | para_style
+  46       |
 
-  68  expression : '(' expression ')'
-  69             | expression DOUBLE_PLUS
-  70             | expression DOUBLE_MINUS
-  71             | expression '+' expression
-  72             | expression '-' expression
-  73             | expression '*' expression
-  74             | expression '/' expression
-  75             | expression '%' expression
-  76             | expression COMPARE expression
-  77             | expression AND expression
-  78             | expression OR expression
-  79             | '!' expression
-  80             | CHAR
-  81             | STRING
-  82             | KFALSE
-  83             | KTRUE
-  84             | UNUM
-  85             | ID
+  47  para_style : type ID
+  48             | type ID '[' INT ']' dim
 
-  86  UNUM : '+' NUM
-  87       | '-' NUM
-  88       | NUM
+  49  S : type lots_of_type ';'
+  50    | KCONST type lots_of_const_type ';'
 
-  89  NUM : INT
-  90      | DOUBLE
+  51  dim : '[' INT ']' dim
+  52      |
+
+  53  array_init : '=' '{' array_element '}'
+  54             |
+
+  55  array_element : array_element ',' expression
+  56                |
+  57                | expression
+
+  58  lots_of_type : lots_of_type ',' type_init
+  59               | type_init
+
+  60  lots_of_const_type : lots_of_const_type ',' const_type_init
+  61                     | const_type_init
+
+  62  const_type_init : ID '=' expression
+
+  63  type_init : ID '=' expression
+  64            | ID
+  65            | ID '[' INT ']' dim array_init
+
+  66  type : KINT
+  67       | KDOUBLE
+  68       | KCHAR
+  69       | KBOOL
+
+  70  lots_of_expression_var : expression_var ',' lots_of_expression_var
+  71                         | expression_var
+
+  72  expression_var : '(' expression_var ')'
+  73                 | expression_var DOUBLE_PLUS
+  74                 | expression_var DOUBLE_MINUS
+  75                 | expression_var '+' expression_var
+  76                 | expression_var '-' expression_var
+  77                 | expression_var '*' expression_var
+  78                 | expression_var '/' expression_var
+  79                 | expression_var '%' expression_var
+  80                 | expression_var COMPARE expression_var
+  81                 | expression_var AND expression_var
+  82                 | expression_var OR expression_var
+  83                 | '!' expression_var
+  84                 | CHAR
+  85                 | STRING
+  86                 | KFALSE
+  87                 | KTRUE
+  88                 | UNUM
+  89                 | ID
+  90                 | ID '[' expression_var ']' stat_element_dim
+  91                 | function_var
+
+  92  expression : '(' expression ')'
+  93             | expression DOUBLE_PLUS
+  94             | expression DOUBLE_MINUS
+  95             | expression '+' expression
+  96             | expression '-' expression
+  97             | expression '*' expression
+  98             | expression '/' expression
+  99             | expression '%' expression
+ 100             | expression COMPARE expression
+ 101             | expression AND expression
+ 102             | expression OR expression
+ 103             | '!' expression
+ 104             | CHAR
+ 105             | STRING
+ 106             | KFALSE
+ 107             | KTRUE
+ 108             | UNUM
+ 109             | ID
+
+ 110  UNUM : '+' NUM
+ 111       | '-' NUM
+ 112       | NUM
+
+ 113  NUM : INT
+ 114      | DOUBLE
 
 state 0
 	$accept : . program $end  (0)
@@ -141,38 +177,38 @@ state 1
 
 
 state 2
-	function : KVOID . ID '(' para ')' '{' stat '}'  (5)
+	function : KVOID . ID '(' para ')' '{' declare_or_stat '}'  (5)
 
 	ID  shift 11
 	.  error
 
 
 state 3
-	type : KINT .  (42)
+	type : KINT .  (66)
 
-	.  reduce 42
+	.  reduce 66
 
 
 state 4
-	type : KDOUBLE .  (43)
+	type : KDOUBLE .  (67)
 
-	.  reduce 43
+	.  reduce 67
 
 
 state 5
-	type : KBOOL .  (45)
+	type : KBOOL .  (69)
 
-	.  reduce 45
+	.  reduce 69
 
 
 state 6
-	type : KCHAR .  (44)
+	type : KCHAR .  (68)
 
-	.  reduce 44
+	.  reduce 68
 
 
 state 7
-	S : KCONST . type lots_of_const_type ';'  (25)
+	S : KCONST . type lots_of_const_type ';'  (50)
 
 	KINT  shift 3
 	KDOUBLE  shift 4
@@ -196,8 +232,8 @@ state 9
 
 
 state 10
-	function : type . ID '(' para ')' '{' stat '}'  (4)
-	S : type . lots_of_type ';'  (24)
+	function : type . ID '(' para ')' '{' declare_or_stat '}'  (4)
+	S : type . lots_of_type ';'  (49)
 
 	ID  shift 13
 	.  error
@@ -207,14 +243,14 @@ state 10
 
 
 state 11
-	function : KVOID ID . '(' para ')' '{' stat '}'  (5)
+	function : KVOID ID . '(' para ')' '{' declare_or_stat '}'  (5)
 
 	'('  shift 16
 	.  error
 
 
 state 12
-	S : KCONST type . lots_of_const_type ';'  (25)
+	S : KCONST type . lots_of_const_type ';'  (50)
 
 	ID  shift 17
 	.  error
@@ -224,21 +260,21 @@ state 12
 
 
 state 13
-	function : type ID . '(' para ')' '{' stat '}'  (4)
-	type_init : ID . '=' expression  (39)
-	type_init : ID .  (40)
-	type_init : ID . '[' INT ']' dim array_init  (41)
+	function : type ID . '(' para ')' '{' declare_or_stat '}'  (4)
+	type_init : ID . '=' expression  (63)
+	type_init : ID .  (64)
+	type_init : ID . '[' INT ']' dim array_init  (65)
 
 	'['  shift 20
 	'('  shift 21
 	'='  shift 22
-	';'  reduce 40
-	','  reduce 40
+	';'  reduce 64
+	','  reduce 64
 
 
 state 14
-	S : type lots_of_type . ';'  (24)
-	lots_of_type : lots_of_type . ',' type_init  (33)
+	S : type lots_of_type . ';'  (49)
+	lots_of_type : lots_of_type . ',' type_init  (58)
 
 	';'  shift 23
 	','  shift 24
@@ -246,21 +282,21 @@ state 14
 
 
 state 15
-	lots_of_type : type_init .  (34)
+	lots_of_type : type_init .  (59)
 
-	.  reduce 34
+	.  reduce 59
 
 
 state 16
-	function : KVOID ID '(' . para ')' '{' stat '}'  (5)
-	para : .  (21)
+	function : KVOID ID '(' . para ')' '{' declare_or_stat '}'  (5)
+	para : .  (46)
 
 	KINT  shift 3
 	KDOUBLE  shift 4
 	KBOOL  shift 5
 	KCHAR  shift 6
-	')'  reduce 21
-	','  reduce 21
+	')'  reduce 46
+	','  reduce 46
 
 	type  goto 25
 	para  goto 26
@@ -268,17 +304,15 @@ state 16
 
 
 state 17
-	const_type_init : ID . '=' expression  (37)
-	const_type_init : ID .  (38)
+	const_type_init : ID . '=' expression  (62)
 
 	'='  shift 28
-	';'  reduce 38
-	','  reduce 38
+	.  error
 
 
 state 18
-	S : KCONST type lots_of_const_type . ';'  (25)
-	lots_of_const_type : lots_of_const_type . ',' const_type_init  (35)
+	S : KCONST type lots_of_const_type . ';'  (50)
+	lots_of_const_type : lots_of_const_type . ',' const_type_init  (60)
 
 	';'  shift 29
 	','  shift 30
@@ -286,28 +320,28 @@ state 18
 
 
 state 19
-	lots_of_const_type : const_type_init .  (36)
+	lots_of_const_type : const_type_init .  (61)
 
-	.  reduce 36
+	.  reduce 61
 
 
 state 20
-	type_init : ID '[' . INT ']' dim array_init  (41)
+	type_init : ID '[' . INT ']' dim array_init  (65)
 
 	INT  shift 31
 	.  error
 
 
 state 21
-	function : type ID '(' . para ')' '{' stat '}'  (4)
-	para : .  (21)
+	function : type ID '(' . para ')' '{' declare_or_stat '}'  (4)
+	para : .  (46)
 
 	KINT  shift 3
 	KDOUBLE  shift 4
 	KBOOL  shift 5
 	KCHAR  shift 6
-	')'  reduce 21
-	','  reduce 21
+	')'  reduce 46
+	','  reduce 46
 
 	type  goto 25
 	para  goto 32
@@ -315,7 +349,7 @@ state 21
 
 
 state 22
-	type_init : ID '=' . expression  (39)
+	type_init : ID '=' . expression  (63)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -336,13 +370,13 @@ state 22
 
 
 state 23
-	S : type lots_of_type ';' .  (24)
+	S : type lots_of_type ';' .  (49)
 
-	.  reduce 24
+	.  reduce 49
 
 
 state 24
-	lots_of_type : lots_of_type ',' . type_init  (33)
+	lots_of_type : lots_of_type ',' . type_init  (58)
 
 	ID  shift 47
 	.  error
@@ -351,16 +385,16 @@ state 24
 
 
 state 25
-	para_style : type . ID  (22)
-	para_style : type . ID '[' INT ']' dim  (23)
+	para_style : type . ID  (47)
+	para_style : type . ID '[' INT ']' dim  (48)
 
 	ID  shift 49
 	.  error
 
 
 state 26
-	function : KVOID ID '(' para . ')' '{' stat '}'  (5)
-	para : para . ',' para_style  (19)
+	function : KVOID ID '(' para . ')' '{' declare_or_stat '}'  (5)
+	para : para . ',' para_style  (44)
 
 	')'  shift 50
 	','  shift 51
@@ -368,13 +402,13 @@ state 26
 
 
 state 27
-	para : para_style .  (20)
+	para : para_style .  (45)
 
-	.  reduce 20
+	.  reduce 45
 
 
 state 28
-	const_type_init : ID '=' . expression  (37)
+	const_type_init : ID '=' . expression  (62)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -395,13 +429,13 @@ state 28
 
 
 state 29
-	S : KCONST type lots_of_const_type ';' .  (25)
+	S : KCONST type lots_of_const_type ';' .  (50)
 
-	.  reduce 25
+	.  reduce 50
 
 
 state 30
-	lots_of_const_type : lots_of_const_type ',' . const_type_init  (35)
+	lots_of_const_type : lots_of_const_type ',' . const_type_init  (60)
 
 	ID  shift 17
 	.  error
@@ -410,15 +444,15 @@ state 30
 
 
 state 31
-	type_init : ID '[' INT . ']' dim array_init  (41)
+	type_init : ID '[' INT . ']' dim array_init  (65)
 
 	']'  shift 54
 	.  error
 
 
 state 32
-	function : type ID '(' para . ')' '{' stat '}'  (4)
-	para : para . ',' para_style  (19)
+	function : type ID '(' para . ')' '{' declare_or_stat '}'  (4)
+	para : para . ',' para_style  (44)
 
 	')'  shift 55
 	','  shift 51
@@ -426,49 +460,49 @@ state 32
 
 
 state 33
-	expression : KTRUE .  (83)
+	expression : KTRUE .  (107)
 
-	.  reduce 83
+	.  reduce 107
 
 
 state 34
-	expression : KFALSE .  (82)
+	expression : KFALSE .  (106)
 
-	.  reduce 82
+	.  reduce 106
 
 
 state 35
-	expression : ID .  (85)
+	expression : ID .  (109)
 
-	.  reduce 85
+	.  reduce 109
 
 
 state 36
-	NUM : INT .  (89)
+	NUM : INT .  (113)
 
-	.  reduce 89
+	.  reduce 113
 
 
 state 37
-	NUM : DOUBLE .  (90)
+	NUM : DOUBLE .  (114)
 
-	.  reduce 90
+	.  reduce 114
 
 
 state 38
-	expression : CHAR .  (80)
+	expression : CHAR .  (104)
 
-	.  reduce 80
+	.  reduce 104
 
 
 state 39
-	expression : STRING .  (81)
+	expression : STRING .  (105)
 
-	.  reduce 81
+	.  reduce 105
 
 
 state 40
-	expression : '!' . expression  (79)
+	expression : '!' . expression  (103)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -489,7 +523,7 @@ state 40
 
 
 state 41
-	UNUM : '+' . NUM  (86)
+	UNUM : '+' . NUM  (110)
 
 	INT  shift 36
 	DOUBLE  shift 37
@@ -499,7 +533,7 @@ state 41
 
 
 state 42
-	UNUM : '-' . NUM  (87)
+	UNUM : '-' . NUM  (111)
 
 	INT  shift 36
 	DOUBLE  shift 37
@@ -509,7 +543,7 @@ state 42
 
 
 state 43
-	expression : '(' . expression ')'  (68)
+	expression : '(' . expression ')'  (92)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -530,17 +564,17 @@ state 43
 
 
 state 44
-	type_init : ID '=' expression .  (39)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	type_init : ID '=' expression .  (63)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -552,57 +586,57 @@ state 44
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	';'  reduce 39
-	','  reduce 39
+	';'  reduce 63
+	','  reduce 63
 
 
 state 45
-	expression : UNUM .  (84)
+	expression : UNUM .  (108)
 
-	.  reduce 84
+	.  reduce 108
 
 
 state 46
-	UNUM : NUM .  (88)
+	UNUM : NUM .  (112)
 
-	.  reduce 88
+	.  reduce 112
 
 
 state 47
-	type_init : ID . '=' expression  (39)
-	type_init : ID .  (40)
-	type_init : ID . '[' INT ']' dim array_init  (41)
+	type_init : ID . '=' expression  (63)
+	type_init : ID .  (64)
+	type_init : ID . '[' INT ']' dim array_init  (65)
 
 	'['  shift 20
 	'='  shift 22
-	';'  reduce 40
-	','  reduce 40
+	';'  reduce 64
+	','  reduce 64
 
 
 state 48
-	lots_of_type : lots_of_type ',' type_init .  (33)
+	lots_of_type : lots_of_type ',' type_init .  (58)
 
-	.  reduce 33
+	.  reduce 58
 
 
 state 49
-	para_style : type ID .  (22)
-	para_style : type ID . '[' INT ']' dim  (23)
+	para_style : type ID .  (47)
+	para_style : type ID . '[' INT ']' dim  (48)
 
 	'['  shift 70
-	')'  reduce 22
-	','  reduce 22
+	')'  reduce 47
+	','  reduce 47
 
 
 state 50
-	function : KVOID ID '(' para ')' . '{' stat '}'  (5)
+	function : KVOID ID '(' para ')' . '{' declare_or_stat '}'  (5)
 
 	'{'  shift 71
 	.  error
 
 
 state 51
-	para : para ',' . para_style  (19)
+	para : para ',' . para_style  (44)
 
 	KINT  shift 3
 	KDOUBLE  shift 4
@@ -615,17 +649,17 @@ state 51
 
 
 state 52
-	const_type_init : ID '=' expression .  (37)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	const_type_init : ID '=' expression .  (62)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -637,47 +671,47 @@ state 52
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	';'  reduce 37
-	','  reduce 37
+	';'  reduce 62
+	','  reduce 62
 
 
 state 53
-	lots_of_const_type : lots_of_const_type ',' const_type_init .  (35)
+	lots_of_const_type : lots_of_const_type ',' const_type_init .  (60)
 
-	.  reduce 35
+	.  reduce 60
 
 
 state 54
-	type_init : ID '[' INT ']' . dim array_init  (41)
-	dim : .  (27)
+	type_init : ID '[' INT ']' . dim array_init  (65)
+	dim : .  (52)
 
 	'['  shift 73
-	'='  reduce 27
-	';'  reduce 27
-	','  reduce 27
+	';'  reduce 52
+	'='  reduce 52
+	','  reduce 52
 
 	dim  goto 74
 
 
 state 55
-	function : type ID '(' para ')' . '{' stat '}'  (4)
+	function : type ID '(' para ')' . '{' declare_or_stat '}'  (4)
 
 	'{'  shift 75
 	.  error
 
 
 state 56
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-	expression : '!' expression .  (79)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
+	expression : '!' expression .  (103)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -687,39 +721,38 @@ state 56
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	AND  reduce 79
-	OR  reduce 79
-	']'  reduce 79
-	')'  reduce 79
-	'}'  reduce 79
-	';'  reduce 79
-	','  reduce 79
+	AND  reduce 103
+	OR  reduce 103
+	')'  reduce 103
+	'}'  reduce 103
+	';'  reduce 103
+	','  reduce 103
 
 
 state 57
-	UNUM : '+' NUM .  (86)
+	UNUM : '+' NUM .  (110)
 
-	.  reduce 86
+	.  reduce 110
 
 
 state 58
-	UNUM : '-' NUM .  (87)
+	UNUM : '-' NUM .  (111)
 
-	.  reduce 87
+	.  reduce 111
 
 
 state 59
-	expression : '(' expression . ')'  (68)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : '(' expression . ')'  (92)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -736,7 +769,7 @@ state 59
 
 
 state 60
-	expression : expression COMPARE . expression  (76)
+	expression : expression COMPARE . expression  (100)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -757,19 +790,19 @@ state 60
 
 
 state 61
-	expression : expression DOUBLE_MINUS .  (70)
+	expression : expression DOUBLE_MINUS .  (94)
 
-	.  reduce 70
+	.  reduce 94
 
 
 state 62
-	expression : expression DOUBLE_PLUS .  (69)
+	expression : expression DOUBLE_PLUS .  (93)
 
-	.  reduce 69
+	.  reduce 93
 
 
 state 63
-	expression : expression AND . expression  (77)
+	expression : expression AND . expression  (101)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -790,7 +823,7 @@ state 63
 
 
 state 64
-	expression : expression OR . expression  (78)
+	expression : expression OR . expression  (102)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -811,7 +844,7 @@ state 64
 
 
 state 65
-	expression : expression '+' . expression  (71)
+	expression : expression '+' . expression  (95)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -832,7 +865,7 @@ state 65
 
 
 state 66
-	expression : expression '-' . expression  (72)
+	expression : expression '-' . expression  (96)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -853,7 +886,7 @@ state 66
 
 
 state 67
-	expression : expression '*' . expression  (73)
+	expression : expression '*' . expression  (97)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -874,7 +907,7 @@ state 67
 
 
 state 68
-	expression : expression '/' . expression  (74)
+	expression : expression '/' . expression  (98)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -895,7 +928,7 @@ state 68
 
 
 state 69
-	expression : expression '%' . expression  (75)
+	expression : expression '%' . expression  (99)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -916,94 +949,68 @@ state 69
 
 
 state 70
-	para_style : type ID '[' . INT ']' dim  (23)
+	para_style : type ID '[' . INT ']' dim  (48)
 
 	INT  shift 85
 	.  error
 
 
 state 71
-	function : KVOID ID '(' para ')' '{' . stat '}'  (5)
-	stat : .  (10)
+	function : KVOID ID '(' para ')' '{' . declare_or_stat '}'  (5)
 
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 90
-	function_var  goto 91
-	for_loop  goto 92
+	declare_or_stat  shift 86
+	.  error
 
 
 state 72
-	para : para ',' para_style .  (19)
+	para : para ',' para_style .  (44)
 
-	.  reduce 19
+	.  reduce 44
 
 
 state 73
-	dim : '[' . INT ']' dim  (26)
+	dim : '[' . INT ']' dim  (51)
 
-	INT  shift 93
+	INT  shift 87
 	.  error
 
 
 state 74
-	type_init : ID '[' INT ']' dim . array_init  (41)
-	array_init : .  (29)
+	type_init : ID '[' INT ']' dim . array_init  (65)
+	array_init : .  (54)
 
-	'='  shift 94
-	';'  reduce 29
-	','  reduce 29
+	'='  shift 88
+	';'  reduce 54
+	','  reduce 54
 
-	array_init  goto 95
+	array_init  goto 89
 
 
 state 75
-	function : type ID '(' para ')' '{' . stat '}'  (4)
-	stat : .  (10)
+	function : type ID '(' para ')' '{' . declare_or_stat '}'  (4)
 
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 96
-	function_var  goto 91
-	for_loop  goto 92
+	declare_or_stat  shift 90
+	.  error
 
 
 state 76
-	expression : '(' expression ')' .  (68)
+	expression : '(' expression ')' .  (92)
 
-	.  reduce 68
+	.  reduce 92
 
 
 state 77
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression COMPARE expression .  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression COMPARE expression .  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	DOUBLE_MINUS  shift 61
 	DOUBLE_PLUS  shift 62
@@ -1012,28 +1019,27 @@ state 77
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	COMPARE  reduce 76
-	AND  reduce 76
-	OR  reduce 76
-	']'  reduce 76
-	')'  reduce 76
-	'}'  reduce 76
-	';'  reduce 76
-	','  reduce 76
+	COMPARE  reduce 100
+	AND  reduce 100
+	OR  reduce 100
+	')'  reduce 100
+	'}'  reduce 100
+	';'  reduce 100
+	','  reduce 100
 
 
 state 78
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression AND expression .  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression AND expression .  (101)
+	expression : expression . OR expression  (102)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -1043,27 +1049,26 @@ state 78
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	AND  reduce 77
-	OR  reduce 77
-	']'  reduce 77
-	')'  reduce 77
-	'}'  reduce 77
-	';'  reduce 77
-	','  reduce 77
+	AND  reduce 101
+	OR  reduce 101
+	')'  reduce 101
+	'}'  reduce 101
+	';'  reduce 101
+	','  reduce 101
 
 
 state 79
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-	expression : expression OR expression .  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
+	expression : expression OR expression .  (102)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -1074,304 +1079,315 @@ state 79
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	OR  reduce 78
-	']'  reduce 78
-	')'  reduce 78
-	'}'  reduce 78
-	';'  reduce 78
-	','  reduce 78
+	OR  reduce 102
+	')'  reduce 102
+	'}'  reduce 102
+	';'  reduce 102
+	','  reduce 102
 
 
 state 80
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression '+' expression .  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression '+' expression .  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	DOUBLE_MINUS  shift 61
 	DOUBLE_PLUS  shift 62
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	COMPARE  reduce 71
-	AND  reduce 71
-	OR  reduce 71
-	'+'  reduce 71
-	'-'  reduce 71
-	']'  reduce 71
-	')'  reduce 71
-	'}'  reduce 71
-	';'  reduce 71
-	','  reduce 71
+	COMPARE  reduce 95
+	AND  reduce 95
+	OR  reduce 95
+	'+'  reduce 95
+	'-'  reduce 95
+	')'  reduce 95
+	'}'  reduce 95
+	';'  reduce 95
+	','  reduce 95
 
 
 state 81
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression '-' expression .  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression '-' expression .  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	DOUBLE_MINUS  shift 61
 	DOUBLE_PLUS  shift 62
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	COMPARE  reduce 72
-	AND  reduce 72
-	OR  reduce 72
-	'+'  reduce 72
-	'-'  reduce 72
-	']'  reduce 72
-	')'  reduce 72
-	'}'  reduce 72
-	';'  reduce 72
-	','  reduce 72
+	COMPARE  reduce 96
+	AND  reduce 96
+	OR  reduce 96
+	'+'  reduce 96
+	'-'  reduce 96
+	')'  reduce 96
+	'}'  reduce 96
+	';'  reduce 96
+	','  reduce 96
 
 
 state 82
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression '*' expression .  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression '*' expression .  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	DOUBLE_MINUS  shift 61
 	DOUBLE_PLUS  shift 62
-	COMPARE  reduce 73
-	AND  reduce 73
-	OR  reduce 73
-	'+'  reduce 73
-	'-'  reduce 73
-	'*'  reduce 73
-	'/'  reduce 73
-	'%'  reduce 73
-	']'  reduce 73
-	')'  reduce 73
-	'}'  reduce 73
-	';'  reduce 73
-	','  reduce 73
+	COMPARE  reduce 97
+	AND  reduce 97
+	OR  reduce 97
+	'+'  reduce 97
+	'-'  reduce 97
+	'*'  reduce 97
+	'/'  reduce 97
+	'%'  reduce 97
+	')'  reduce 97
+	'}'  reduce 97
+	';'  reduce 97
+	','  reduce 97
 
 
 state 83
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression '/' expression .  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression '/' expression .  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	DOUBLE_MINUS  shift 61
 	DOUBLE_PLUS  shift 62
-	COMPARE  reduce 74
-	AND  reduce 74
-	OR  reduce 74
-	'+'  reduce 74
-	'-'  reduce 74
-	'*'  reduce 74
-	'/'  reduce 74
-	'%'  reduce 74
-	']'  reduce 74
-	')'  reduce 74
-	'}'  reduce 74
-	';'  reduce 74
-	','  reduce 74
+	COMPARE  reduce 98
+	AND  reduce 98
+	OR  reduce 98
+	'+'  reduce 98
+	'-'  reduce 98
+	'*'  reduce 98
+	'/'  reduce 98
+	'%'  reduce 98
+	')'  reduce 98
+	'}'  reduce 98
+	';'  reduce 98
+	','  reduce 98
 
 
 state 84
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression '%' expression .  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression '%' expression .  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	DOUBLE_MINUS  shift 61
 	DOUBLE_PLUS  shift 62
-	COMPARE  reduce 75
-	AND  reduce 75
-	OR  reduce 75
-	'+'  reduce 75
-	'-'  reduce 75
-	'*'  reduce 75
-	'/'  reduce 75
-	'%'  reduce 75
-	']'  reduce 75
-	')'  reduce 75
-	'}'  reduce 75
-	';'  reduce 75
-	','  reduce 75
+	COMPARE  reduce 99
+	AND  reduce 99
+	OR  reduce 99
+	'+'  reduce 99
+	'-'  reduce 99
+	'*'  reduce 99
+	'/'  reduce 99
+	'%'  reduce 99
+	')'  reduce 99
+	'}'  reduce 99
+	';'  reduce 99
+	','  reduce 99
 
 
 state 85
-	para_style : type ID '[' INT . ']' dim  (23)
+	para_style : type ID '[' INT . ']' dim  (48)
 
-	']'  shift 97
+	']'  shift 91
 	.  error
 
 
 state 86
-	for_loop : KFOR . '(' expression ';' expression ';' expression ')' '{' stat '}'  (15)
-	for_loop : KFOR . '(' expression ';' expression ';' expression ')' '{' '}'  (16)
+	function : KVOID ID '(' para ')' '{' declare_or_stat . '}'  (5)
 
-	'('  shift 98
+	'}'  shift 92
 	.  error
 
 
 state 87
-	function_var : ID . '(' lots_of_expression_var ')'  (6)
-	function_var : ID . '(' ')'  (7)
-	stat : ID . '=' expression ';' stat  (8)
-	stat : ID . '[' expression ']' stat_element_dim '=' expression ';' stat  (9)
-	stat : ID . '=' function_var ';' stat  (11)
+	dim : '[' INT . ']' dim  (51)
 
-	'['  shift 99
-	'('  shift 100
-	'='  shift 101
+	']'  shift 93
 	.  error
 
 
 state 88
-	stat : S . stat  (13)
-	stat : .  (10)
+	array_init : '=' . '{' array_element '}'  (53)
 
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 102
-	function_var  goto 91
-	for_loop  goto 92
+	'{'  shift 94
+	.  error
 
 
 state 89
-	S : type . lots_of_type ';'  (24)
+	type_init : ID '[' INT ']' dim array_init .  (65)
 
-	ID  shift 47
-	.  error
-
-	lots_of_type  goto 14
-	type_init  goto 15
+	.  reduce 65
 
 
 state 90
-	function : KVOID ID '(' para ')' '{' stat . '}'  (5)
+	function : type ID '(' para ')' '{' declare_or_stat . '}'  (4)
 
-	'}'  shift 103
+	'}'  shift 95
 	.  error
 
 
 state 91
-	stat : function_var . ';' stat  (12)
+	para_style : type ID '[' INT ']' . dim  (48)
+	dim : .  (52)
 
-	';'  shift 104
-	.  error
+	'['  shift 73
+	')'  reduce 52
+	','  reduce 52
+
+	dim  goto 96
 
 
 state 92
-	stat : for_loop .  (14)
+	function : KVOID ID '(' para ')' '{' declare_or_stat '}' .  (5)
 
-	.  reduce 14
+	.  reduce 5
 
 
 state 93
-	dim : '[' INT . ']' dim  (26)
+	dim : '[' INT ']' . dim  (51)
+	dim : .  (52)
 
-	']'  shift 105
-	.  error
+	'['  shift 73
+	')'  reduce 52
+	';'  reduce 52
+	'='  reduce 52
+	','  reduce 52
+
+	dim  goto 97
 
 
 state 94
-	array_init : '=' . '{' array_element '}'  (28)
+	array_init : '=' '{' . array_element '}'  (53)
+	array_element : .  (56)
 
-	'{'  shift 106
-	.  error
+	KTRUE  shift 33
+	KFALSE  shift 34
+	ID  shift 35
+	INT  shift 36
+	DOUBLE  shift 37
+	CHAR  shift 38
+	STRING  shift 39
+	'!'  shift 40
+	'+'  shift 41
+	'-'  shift 42
+	'('  shift 43
+	'}'  reduce 56
+	','  reduce 56
+
+	expression  goto 98
+	array_element  goto 99
+	UNUM  goto 45
+	NUM  goto 46
 
 
 state 95
-	type_init : ID '[' INT ']' dim array_init .  (41)
+	function : type ID '(' para ')' '{' declare_or_stat '}' .  (4)
 
-	.  reduce 41
+	.  reduce 4
 
 
 state 96
-	function : type ID '(' para ')' '{' stat . '}'  (4)
+	para_style : type ID '[' INT ']' dim .  (48)
 
-	'}'  shift 107
-	.  error
+	.  reduce 48
 
 
 state 97
-	para_style : type ID '[' INT ']' . dim  (23)
-	dim : .  (27)
+	dim : '[' INT ']' dim .  (51)
 
-	'['  shift 73
-	')'  reduce 27
-	','  reduce 27
-
-	dim  goto 108
+	.  reduce 51
 
 
 state 98
-	for_loop : KFOR '(' . expression ';' expression ';' expression ')' '{' stat '}'  (15)
-	for_loop : KFOR '(' . expression ';' expression ';' expression ')' '{' '}'  (16)
+	array_element : expression .  (57)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 109
-	UNUM  goto 45
-	NUM  goto 46
+	COMPARE  shift 60
+	DOUBLE_MINUS  shift 61
+	DOUBLE_PLUS  shift 62
+	AND  shift 63
+	OR  shift 64
+	'+'  shift 65
+	'-'  shift 66
+	'*'  shift 67
+	'/'  shift 68
+	'%'  shift 69
+	'}'  reduce 57
+	','  reduce 57
 
 
 state 99
-	stat : ID '[' . expression ']' stat_element_dim '=' expression ';' stat  (9)
+	array_init : '=' '{' array_element . '}'  (53)
+	array_element : array_element . ',' expression  (55)
+
+	'}'  shift 100
+	','  shift 101
+	.  error
+
+
+state 100
+	array_init : '=' '{' array_element '}' .  (53)
+
+	.  reduce 53
+
+
+state 101
+	array_element : array_element ',' . expression  (55)
 
 	KTRUE  shift 33
 	KFALSE  shift 34
@@ -1386,153 +1402,23 @@ state 99
 	'('  shift 43
 	.  error
 
-	expression  goto 110
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 100
-	function_var : ID '(' . lots_of_expression_var ')'  (6)
-	function_var : ID '(' . ')'  (7)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	')'  shift 118
-	.  error
-
-	function_var  goto 119
-	lots_of_expression_var  goto 120
-	expression_var  goto 121
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 101
-	stat : ID '=' . expression ';' stat  (8)
-	stat : ID '=' . function_var ';' stat  (11)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 123
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	function_var  goto 124
-	expression  goto 125
+	expression  goto 102
 	UNUM  goto 45
 	NUM  goto 46
 
 
 state 102
-	stat : S stat .  (13)
-
-	.  reduce 13
-
-
-state 103
-	function : KVOID ID '(' para ')' '{' stat '}' .  (5)
-
-	.  reduce 5
-
-
-state 104
-	stat : function_var ';' . stat  (12)
-	stat : .  (10)
-
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 126
-	function_var  goto 91
-	for_loop  goto 92
-
-
-state 105
-	dim : '[' INT ']' . dim  (26)
-	dim : .  (27)
-
-	'['  shift 73
-	')'  reduce 27
-	'='  reduce 27
-	';'  reduce 27
-	','  reduce 27
-
-	dim  goto 127
-
-
-state 106
-	array_init : '=' '{' . array_element '}'  (28)
-	array_element : .  (31)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	'}'  reduce 31
-	','  reduce 31
-
-	expression  goto 128
-	array_element  goto 129
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 107
-	function : type ID '(' para ')' '{' stat '}' .  (4)
-
-	.  reduce 4
-
-
-state 108
-	para_style : type ID '[' INT ']' dim .  (23)
-
-	.  reduce 23
-
-
-state 109
-	for_loop : KFOR '(' expression . ';' expression ';' expression ')' '{' stat '}'  (15)
-	for_loop : KFOR '(' expression . ';' expression ';' expression ')' '{' '}'  (16)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
+	array_element : array_element ',' expression .  (55)
+	expression : expression . DOUBLE_PLUS  (93)
+	expression : expression . DOUBLE_MINUS  (94)
+	expression : expression . '+' expression  (95)
+	expression : expression . '-' expression  (96)
+	expression : expression . '*' expression  (97)
+	expression : expression . '/' expression  (98)
+	expression : expression . '%' expression  (99)
+	expression : expression . COMPARE expression  (100)
+	expression : expression . AND expression  (101)
+	expression : expression . OR expression  (102)
 
 	COMPARE  shift 60
 	DOUBLE_MINUS  shift 61
@@ -1544,1257 +1430,72 @@ state 109
 	'*'  shift 67
 	'/'  shift 68
 	'%'  shift 69
-	';'  shift 130
-	.  error
-
-
-state 110
-	stat : ID '[' expression . ']' stat_element_dim '=' expression ';' stat  (9)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	']'  shift 131
-	.  error
-
-
-state 111
-	expression_var : KTRUE .  (63)
-
-	.  reduce 63
-
-
-state 112
-	expression_var : KFALSE .  (62)
-
-	.  reduce 62
-
-
-state 113
-	function_var : ID . '(' lots_of_expression_var ')'  (6)
-	function_var : ID . '(' ')'  (7)
-	expression_var : ID .  (65)
-	expression_var : ID . '[' expression ']' stat_element_dim  (66)
-
-	'['  shift 132
-	'('  shift 100
-	COMPARE  reduce 65
-	DOUBLE_MINUS  reduce 65
-	DOUBLE_PLUS  reduce 65
-	AND  reduce 65
-	OR  reduce 65
-	'+'  reduce 65
-	'-'  reduce 65
-	'*'  reduce 65
-	'/'  reduce 65
-	'%'  reduce 65
-	')'  reduce 65
-	','  reduce 65
-
-
-state 114
-	expression_var : CHAR .  (60)
-
-	.  reduce 60
-
-
-state 115
-	expression_var : STRING .  (61)
-
-	.  reduce 61
-
-
-state 116
-	expression_var : '!' . expression_var  (59)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 133
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 117
-	expression_var : '(' . expression_var ')'  (48)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 134
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 118
-	function_var : ID '(' ')' .  (7)
-
-	.  reduce 7
-
-
-state 119
-	expression_var : function_var .  (67)
-
-	.  reduce 67
-
-
-state 120
-	function_var : ID '(' lots_of_expression_var . ')'  (6)
-
-	')'  shift 135
-	.  error
-
-
-state 121
-	lots_of_expression_var : expression_var . ',' lots_of_expression_var  (46)
-	lots_of_expression_var : expression_var .  (47)
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	COMPARE  shift 136
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	AND  shift 139
-	OR  shift 140
-	'+'  shift 141
-	'-'  shift 142
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	','  shift 146
-	')'  reduce 47
-
-
-state 122
-	expression_var : UNUM .  (64)
-
-	.  reduce 64
-
-
-state 123
-	function_var : ID . '(' lots_of_expression_var ')'  (6)
-	function_var : ID . '(' ')'  (7)
-	expression : ID .  (85)
-
-	'('  shift 100
-	COMPARE  reduce 85
-	DOUBLE_MINUS  reduce 85
-	DOUBLE_PLUS  reduce 85
-	AND  reduce 85
-	OR  reduce 85
-	'+'  reduce 85
-	'-'  reduce 85
-	'*'  reduce 85
-	'/'  reduce 85
-	'%'  reduce 85
-	';'  reduce 85
-
-
-state 124
-	stat : ID '=' function_var . ';' stat  (11)
-
-	';'  shift 147
-	.  error
-
-
-state 125
-	stat : ID '=' expression . ';' stat  (8)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	';'  shift 148
-	.  error
-
-
-state 126
-	stat : function_var ';' stat .  (12)
-
-	.  reduce 12
-
-
-state 127
-	dim : '[' INT ']' dim .  (26)
-
-	.  reduce 26
-
-
-state 128
-	array_element : expression .  (32)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	'}'  reduce 32
-	','  reduce 32
-
-
-state 129
-	array_init : '=' '{' array_element . '}'  (28)
-	array_element : array_element . ',' expression  (30)
-
-	'}'  shift 149
-	','  shift 150
-	.  error
-
-
-state 130
-	for_loop : KFOR '(' expression ';' . expression ';' expression ')' '{' stat '}'  (15)
-	for_loop : KFOR '(' expression ';' . expression ';' expression ')' '{' '}'  (16)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 151
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 131
-	stat : ID '[' expression ']' . stat_element_dim '=' expression ';' stat  (9)
-	stat_element_dim : .  (18)
-
-	'['  shift 152
-	'='  reduce 18
-
-	stat_element_dim  goto 153
-
-
-state 132
-	expression_var : ID '[' . expression ']' stat_element_dim  (66)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 154
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 133
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-	expression_var : '!' expression_var .  (59)
-
-	COMPARE  shift 136
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	'+'  shift 141
-	'-'  shift 142
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	AND  reduce 59
-	OR  reduce 59
-	')'  reduce 59
-	','  reduce 59
-
-
-state 134
-	expression_var : '(' expression_var . ')'  (48)
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	COMPARE  shift 136
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	AND  shift 139
-	OR  shift 140
-	'+'  shift 141
-	'-'  shift 142
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	')'  shift 155
-	.  error
-
-
-state 135
-	function_var : ID '(' lots_of_expression_var ')' .  (6)
-
-	.  reduce 6
-
-
-state 136
-	expression_var : expression_var COMPARE . expression_var  (56)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 156
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 137
-	expression_var : expression_var DOUBLE_MINUS .  (50)
-
-	.  reduce 50
-
-
-state 138
-	expression_var : expression_var DOUBLE_PLUS .  (49)
-
-	.  reduce 49
-
-
-state 139
-	expression_var : expression_var AND . expression_var  (57)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 157
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 140
-	expression_var : expression_var OR . expression_var  (58)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 158
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 141
-	expression_var : expression_var '+' . expression_var  (51)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 159
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 142
-	expression_var : expression_var '-' . expression_var  (52)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 160
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 143
-	expression_var : expression_var '*' . expression_var  (53)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 161
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 144
-	expression_var : expression_var '/' . expression_var  (54)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 162
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 145
-	expression_var : expression_var '%' . expression_var  (55)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	expression_var  goto 163
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 146
-	lots_of_expression_var : expression_var ',' . lots_of_expression_var  (46)
-
-	KTRUE  shift 111
-	KFALSE  shift 112
-	ID  shift 113
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 114
-	STRING  shift 115
-	'!'  shift 116
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 117
-	.  error
-
-	function_var  goto 119
-	lots_of_expression_var  goto 164
-	expression_var  goto 121
-	UNUM  goto 122
-	NUM  goto 46
-
-
-state 147
-	stat : ID '=' function_var ';' . stat  (11)
-	stat : .  (10)
-
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 165
-	function_var  goto 91
-	for_loop  goto 92
-
-
-state 148
-	stat : ID '=' expression ';' . stat  (8)
-	stat : .  (10)
-
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 166
-	function_var  goto 91
-	for_loop  goto 92
-
-
-state 149
-	array_init : '=' '{' array_element '}' .  (28)
-
-	.  reduce 28
-
-
-state 150
-	array_element : array_element ',' . expression  (30)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 167
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 151
-	for_loop : KFOR '(' expression ';' expression . ';' expression ')' '{' stat '}'  (15)
-	for_loop : KFOR '(' expression ';' expression . ';' expression ')' '{' '}'  (16)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	';'  shift 168
-	.  error
-
-
-state 152
-	stat_element_dim : '[' . expression ']'  (17)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 169
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 153
-	stat : ID '[' expression ']' stat_element_dim . '=' expression ';' stat  (9)
-
-	'='  shift 170
-	.  error
-
-
-state 154
-	expression_var : ID '[' expression . ']' stat_element_dim  (66)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	']'  shift 171
-	.  error
-
-
-state 155
-	expression_var : '(' expression_var ')' .  (48)
-
-	.  reduce 48
-
-
-state 156
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var COMPARE expression_var .  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	'+'  shift 141
-	'-'  shift 142
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	COMPARE  reduce 56
-	AND  reduce 56
-	OR  reduce 56
-	')'  reduce 56
-	','  reduce 56
-
-
-state 157
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var AND expression_var .  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	COMPARE  shift 136
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	'+'  shift 141
-	'-'  shift 142
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	AND  reduce 57
-	OR  reduce 57
-	')'  reduce 57
-	','  reduce 57
-
-
-state 158
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-	expression_var : expression_var OR expression_var .  (58)
-
-	COMPARE  shift 136
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	AND  shift 139
-	'+'  shift 141
-	'-'  shift 142
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	OR  reduce 58
-	')'  reduce 58
-	','  reduce 58
-
-
-state 159
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var '+' expression_var .  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	COMPARE  reduce 51
-	AND  reduce 51
-	OR  reduce 51
-	'+'  reduce 51
-	'-'  reduce 51
-	')'  reduce 51
-	','  reduce 51
-
-
-state 160
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var '-' expression_var .  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	'*'  shift 143
-	'/'  shift 144
-	'%'  shift 145
-	COMPARE  reduce 52
-	AND  reduce 52
-	OR  reduce 52
-	'+'  reduce 52
-	'-'  reduce 52
-	')'  reduce 52
-	','  reduce 52
-
-
-state 161
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var '*' expression_var .  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	COMPARE  reduce 53
-	AND  reduce 53
-	OR  reduce 53
-	'+'  reduce 53
-	'-'  reduce 53
-	'*'  reduce 53
-	'/'  reduce 53
-	'%'  reduce 53
-	')'  reduce 53
-	','  reduce 53
-
-
-state 162
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var '/' expression_var .  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	COMPARE  reduce 54
-	AND  reduce 54
-	OR  reduce 54
-	'+'  reduce 54
-	'-'  reduce 54
-	'*'  reduce 54
-	'/'  reduce 54
-	'%'  reduce 54
-	')'  reduce 54
-	','  reduce 54
-
-
-state 163
-	expression_var : expression_var . DOUBLE_PLUS  (49)
-	expression_var : expression_var . DOUBLE_MINUS  (50)
-	expression_var : expression_var . '+' expression_var  (51)
-	expression_var : expression_var . '-' expression_var  (52)
-	expression_var : expression_var . '*' expression_var  (53)
-	expression_var : expression_var . '/' expression_var  (54)
-	expression_var : expression_var . '%' expression_var  (55)
-	expression_var : expression_var '%' expression_var .  (55)
-	expression_var : expression_var . COMPARE expression_var  (56)
-	expression_var : expression_var . AND expression_var  (57)
-	expression_var : expression_var . OR expression_var  (58)
-
-	DOUBLE_MINUS  shift 137
-	DOUBLE_PLUS  shift 138
-	COMPARE  reduce 55
-	AND  reduce 55
-	OR  reduce 55
-	'+'  reduce 55
-	'-'  reduce 55
-	'*'  reduce 55
-	'/'  reduce 55
-	'%'  reduce 55
-	')'  reduce 55
+	'}'  reduce 55
 	','  reduce 55
 
 
-state 164
-	lots_of_expression_var : expression_var ',' lots_of_expression_var .  (46)
-
-	.  reduce 46
-
-
-state 165
-	stat : ID '=' function_var ';' stat .  (11)
-
-	.  reduce 11
-
-
-state 166
-	stat : ID '=' expression ';' stat .  (8)
-
-	.  reduce 8
-
-
-state 167
-	array_element : array_element ',' expression .  (30)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	'}'  reduce 30
-	','  reduce 30
-
-
-state 168
-	for_loop : KFOR '(' expression ';' expression ';' . expression ')' '{' stat '}'  (15)
-	for_loop : KFOR '(' expression ';' expression ';' . expression ')' '{' '}'  (16)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 172
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 169
-	stat_element_dim : '[' expression . ']'  (17)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	']'  shift 173
-	.  error
-
-
-state 170
-	stat : ID '[' expression ']' stat_element_dim '=' . expression ';' stat  (9)
-
-	KTRUE  shift 33
-	KFALSE  shift 34
-	ID  shift 35
-	INT  shift 36
-	DOUBLE  shift 37
-	CHAR  shift 38
-	STRING  shift 39
-	'!'  shift 40
-	'+'  shift 41
-	'-'  shift 42
-	'('  shift 43
-	.  error
-
-	expression  goto 174
-	UNUM  goto 45
-	NUM  goto 46
-
-
-state 171
-	expression_var : ID '[' expression ']' . stat_element_dim  (66)
-	stat_element_dim : .  (18)
-
-	'['  shift 152
-	COMPARE  reduce 18
-	DOUBLE_MINUS  reduce 18
-	DOUBLE_PLUS  reduce 18
-	AND  reduce 18
-	OR  reduce 18
-	'+'  reduce 18
-	'-'  reduce 18
-	'*'  reduce 18
-	'/'  reduce 18
-	'%'  reduce 18
-	')'  reduce 18
-	','  reduce 18
-
-	stat_element_dim  goto 175
-
-
-state 172
-	for_loop : KFOR '(' expression ';' expression ';' expression . ')' '{' stat '}'  (15)
-	for_loop : KFOR '(' expression ';' expression ';' expression . ')' '{' '}'  (16)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	')'  shift 176
-	.  error
-
-
-state 173
-	stat_element_dim : '[' expression ']' .  (17)
-
-	.  reduce 17
-
-
-state 174
-	stat : ID '[' expression ']' stat_element_dim '=' expression . ';' stat  (9)
-	expression : expression . DOUBLE_PLUS  (69)
-	expression : expression . DOUBLE_MINUS  (70)
-	expression : expression . '+' expression  (71)
-	expression : expression . '-' expression  (72)
-	expression : expression . '*' expression  (73)
-	expression : expression . '/' expression  (74)
-	expression : expression . '%' expression  (75)
-	expression : expression . COMPARE expression  (76)
-	expression : expression . AND expression  (77)
-	expression : expression . OR expression  (78)
-
-	COMPARE  shift 60
-	DOUBLE_MINUS  shift 61
-	DOUBLE_PLUS  shift 62
-	AND  shift 63
-	OR  shift 64
-	'+'  shift 65
-	'-'  shift 66
-	'*'  shift 67
-	'/'  shift 68
-	'%'  shift 69
-	';'  shift 177
-	.  error
-
-
-state 175
-	expression_var : ID '[' expression ']' stat_element_dim .  (66)
-
-	.  reduce 66
-
-
-state 176
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' . '{' stat '}'  (15)
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' . '{' '}'  (16)
-
-	'{'  shift 178
-	.  error
-
-
-state 177
-	stat : ID '[' expression ']' stat_element_dim '=' expression ';' . stat  (9)
-	stat : .  (10)
-
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  reduce 10
-
-	S  goto 88
-	type  goto 89
-	stat  goto 179
-	function_var  goto 91
-	for_loop  goto 92
-
-
-178: shift/reduce conflict (shift 180, reduce 10) on '}'
-state 178
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' '{' . stat '}'  (15)
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' '{' . '}'  (16)
-	stat : .  (10)
-
-	KINT  shift 3
-	KDOUBLE  shift 4
-	KBOOL  shift 5
-	KCHAR  shift 6
-	KFOR  shift 86
-	KCONST  shift 7
-	ID  shift 87
-	'}'  shift 180
-
-	S  goto 88
-	type  goto 89
-	stat  goto 181
-	function_var  goto 91
-	for_loop  goto 92
-
-
-state 179
-	stat : ID '[' expression ']' stat_element_dim '=' expression ';' stat .  (9)
-
-	.  reduce 9
-
-
-state 180
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' '{' '}' .  (16)
-
-	.  reduce 16
-
-
-state 181
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' '{' stat . '}'  (15)
-
-	'}'  shift 182
-	.  error
-
-
-state 182
-	for_loop : KFOR '(' expression ';' expression ';' expression ')' '{' stat '}' .  (15)
-
-	.  reduce 15
-
-
-State 178 contains 1 shift/reduce conflict.
-
-
-49 terminals, 23 nonterminals
-91 grammar rules, 183 states
+Rules never reduced:
+	function_var : ID '(' lots_of_expression_var ')'  (6)
+	function_var : ID '(' ')'  (7)
+	full_stats : stats full_stats  (8)
+	full_stats : S full_stats  (9)
+	full_stats :  (10)
+	nf : stats nf  (11)
+	nf :  (12)
+	stats : stat ';'  (13)
+	stats : if_stat  (14)
+	stats : for_loop  (15)
+	stats : while_stat  (16)
+	stats : do_while_stat  (17)
+	stats : switch_stat  (18)
+	stat : ID '=' expression  (19)
+	stat : ID '[' expression_var ']' stat_element_dim '=' expression  (20)
+	stat : ID '=' function_var  (21)
+	stat : function_var  (22)
+	stat : KBREAK  (23)
+	stat : KCONTINUE  (24)
+	stat : KRETURN expression  (25)
+	switch_stat : KSWITCH '(' ID ')' '{' default_stat '}'  (26)
+	switch_stat : KSWITCH '(' ID ')' '{' non_default_stat '}'  (27)
+	default_stat : KCASE const ':' nf default_stat  (28)
+	default_stat : KDEFAULT ':' nf  (29)
+	non_default_stat : KCASE const ':' nf non_default_case_stat  (30)
+	non_default_case_stat : KCASE const ':' nf non_default_case_stat  (31)
+	non_default_case_stat :  (32)
+	const : CHAR  (33)
+	const : INT  (34)
+	while_stat : KWHILE '(' expression ')' '{' full_stats '}'  (35)
+	do_while_stat : KDO '{' full_stats '}' KWHILE '(' expression ')' ';'  (36)
+	if_stat : KIF '(' expression ')' '{' full_stats '}'  (37)
+	if_stat : KIF '(' expression ')' '{' full_stats '}' KELSE '{' full_stats '}'  (38)
+	for_loop : KFOR '(' for_loop_para ';' for_loop_para ';' for_loop_para ')' '{' full_stats '}'  (39)
+	for_loop_para : expression  (40)
+	for_loop_para :  (41)
+	stat_element_dim : '[' expression_var ']'  (42)
+	stat_element_dim :  (43)
+	lots_of_expression_var : expression_var ',' lots_of_expression_var  (70)
+	lots_of_expression_var : expression_var  (71)
+	expression_var : '(' expression_var ')'  (72)
+	expression_var : expression_var DOUBLE_PLUS  (73)
+	expression_var : expression_var DOUBLE_MINUS  (74)
+	expression_var : expression_var '+' expression_var  (75)
+	expression_var : expression_var '-' expression_var  (76)
+	expression_var : expression_var '*' expression_var  (77)
+	expression_var : expression_var '/' expression_var  (78)
+	expression_var : expression_var '%' expression_var  (79)
+	expression_var : expression_var COMPARE expression_var  (80)
+	expression_var : expression_var AND expression_var  (81)
+	expression_var : expression_var OR expression_var  (82)
+	expression_var : '!' expression_var  (83)
+	expression_var : CHAR  (84)
+	expression_var : STRING  (85)
+	expression_var : KFALSE  (86)
+	expression_var : KTRUE  (87)
+	expression_var : UNUM  (88)
+	expression_var : ID  (89)
+	expression_var : ID '[' expression_var ']' stat_element_dim  (90)
+	expression_var : function_var  (91)
+
+
+51 terminals, 35 nonterminals
+115 grammar rules, 103 states

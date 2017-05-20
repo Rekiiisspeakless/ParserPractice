@@ -164,10 +164,10 @@ j+2;
 
 
 void test_error(){
-const int d; //const should have initialize
+// const int d; //const should have initialize
 // const int b=2,a[2]={"d"}; //const can't have array
 // int cc(){	int dd(){}  }//function nested detect
-// switch(EMT){case 486: char cc[5]={"12345"};} //define in switchcase
+switch(EMT){case 486: char cc[5]={"12345"};} //define in switchcase
 // switch(EMT486){case 6 : break; default: case 3: break;}	//default not at last
 // switch(ETTT){}	//no case inside
 // if(486){a=2; int EMT=9487;} //strict order

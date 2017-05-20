@@ -42,7 +42,17 @@ stat: ID '=' expression ';' stat
 	| ID '=' function_var ';' stat
 	| function_var ';' stat
 	|S stat
+	| if_stat stat
+	| for_loop stat
 	;
+if_stat: KIF '(' expression  ')'  '{' stat '}'
+	   | KIF '(' expression  ')'  '{' stat '}' KELSE '{' stat '}' 
+       ;
+for_loop: KFOR '('for_loop_para ';' for_loop_para ';' for_loop_para')''{' stat '}'
+		;
+for_loop_para: expression
+			 | 
+			 ;
 stat_element_dim: '[' expression ']'
 				|
 				;

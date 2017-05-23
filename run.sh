@@ -1,1 +1,1 @@
-./parser < 137testcase.cs
+./parser < my_testcase.cs

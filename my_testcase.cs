@@ -141,27 +141,10 @@ int mix_use(double g[2][3],char c[3])
 		printf("%d",abc);	//test std function
 		return EMT;
 	}
+	if(486){a=2; int EMT=9487;} //no strict order
+	while(1){a=2; int EMT=9487;} //no strict order
+	for(;test;){a=2; int EMT=9487;} //no strict order
 }
-/*int test_self()	//remove for simple test
-{ 
-for(;i<10;i++){}
-for(i=0;i<10&&j>3;i++,j++);
-for(;;)
-{
-	for(;;i--){
-		for(;j<12;);
-	}
-}
-while(QQ);
-if(GG){}
-else if(EMT>999){}
-return;
-gj++;
-jg--;
-j+2;
-8787>=33||23;
-}*/
-
 
 void test_error(){
 // const int d; //const should have initialize
@@ -170,11 +153,7 @@ void test_error(){
 // switch(EMT){case 486: char cc[5]={"12345"};} //define in switchcase
 // switch(EMT486){case 6 : break; default: case 3: break;}	//default not at last
 // switch(ETTT){}	//no case inside
-// if(486){a=2; int EMT=9487;} //strict order
-// while(1){a=2; int EMT=9487;} //strict order
 // int GG(){	for(;;){} int ee(){} }//function nested detect
-// for(;test;){a=2; int EMT=9487;} //strict order
-// {a=2; int EMT=9487;} //strict order
 // int a[2/4];//error
 }
 // int a(b[3+2]){}//error

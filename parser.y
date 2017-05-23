@@ -193,7 +193,13 @@ int main(void)
 	return 0;
 }
 int yyerror(char* msg){
-	fprintf(stderr, "***Error at line %d: %s\n",lineCount + 1, curString);
+
+	if(function_main_flag == 0){
+		fprintf(stderr, "***Error at line %d: %s\n",lineCount + 1, curString);
+	}else{
+		fprintf(stderr, "***Error at line %d: %s\n",lineCount, curString);
+	}
+	
 	fprintf(stderr,"\n");
 	fprintf(stderr, "Unmatched token: %s\n", yytext);
 	fprintf(stderr, "***syntax error\n");
